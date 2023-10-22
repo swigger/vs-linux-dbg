@@ -7,6 +7,8 @@
 #include <atlcom.h>
 #include <Windows.h>
 #include <stdlib.h>
+#include <stdint.h>
+
 
 #include <iostream>
 #include <string>
@@ -19,3 +21,7 @@
 
 using std::string;
 using std::vector;
+using std::map;
+using std::unordered_map;
+typedef const std::string& crefstr;
+typedef SSIZE_T ssize_t;

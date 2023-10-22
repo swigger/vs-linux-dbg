@@ -14,7 +14,7 @@ namespace {
 		if (FAILED(hr)) return false;
 
 		value.resize(otext.Length() * 3 + 10);
-		int len = WideCharToMultiByte(CP_UTF8, 0, otext, otext.Length(), &value[0], value.size(), nullptr, nullptr);
+		int len = WideCharToMultiByte(CP_UTF8, 0, otext, otext.Length(), &value[0], (int)value.size(), nullptr, nullptr);
 		value.resize(len);
 		return true;
 	}
@@ -47,7 +47,7 @@ namespace {
 		hr = pIdAttr->get_text(&text);
 		if (FAILED(hr)) return false;
 		val.resize(text.Length() * 3 + 10);
-		int len = WideCharToMultiByte(CP_UTF8, 0, text, text.Length(), &val[0], val.size(), nullptr, nullptr);
+		int len = WideCharToMultiByte(CP_UTF8, 0, text, text.Length(), &val[0], (int)val.size(), nullptr, nullptr);
 		val.resize(len);
 		return true;
 	}
@@ -67,10 +67,10 @@ namespace {
 }
 
 struct Store {
-	std::map<int64_t, SSH2Host> entries;
+	std::map<int64_t, CSSH2::Host> entries;
 };
 
-bool parseXML(LPCWSTR fn, Store& store)
+static bool parseXML(LPCWSTR fn, Store& store)
 {
 	HRESULT hr;
 	CComPtr<IXMLDOMDocument> pDoc;
@@ -92,7 +92,7 @@ bool parseXML(LPCWSTR fn, Store& store)
 		CComPtr<IXMLDOMNode> entry;
 		hr = pEntries->get_item(i, &entry);
 		if (FAILED(hr))	continue;
-		SSH2Host entry1;
+		CSSH2::Host entry1;
 		int64_t id;
 		util::RecordResult rr;
 		rr << get_attr(entry, L"id", id);
@@ -114,23 +114,61 @@ bool parseXML(LPCWSTR fn, Store& store)
 
 int main1(int argc, char** argv)
 {
+	int64_t conid = -1;
+	int sync_pid = -1;
+	string cmd;
+	for (int i = 1; i < argc; ++i)
+	{
+		if (strcmp(argv[i], "/c") == 0) {
+			for (++i; i < argc; ++i) {
+				cmd += argv[i];
+				if (i+1 < argc) cmd += ' ';
+			}
+		}
+		else if (strcmp(argv[i], "/p") == 0) {
+			sync_pid = atoi(argv[++i]);
+		} else if (strcmp(argv[i], "/s") == 0) {
+			conid = atoll(argv[++i]);
+		}
+		else {
+			fprintf(stderr, "unknown option %s\n", argv[i]);
+			return 1;
+		}
+	}
+	if (conid < 0)
+	{
+		fprintf(stderr, "missing connection id\n");
+		return 1;
+	}
+
 	Store store;
 	bool b = parseXML(LR"(C:\Users\xungeng\AppData\Local\Microsoft\Linux\User Data\3.0\store.xml)", store);
 	if (!b) {
 		fprintf(stderr, "failed to load store.xml\n");
 		return 1;
 	}
-	for (auto& [id, entry] : store.entries) {
-		printf("%lld %s %d %s %s %s\n", id, entry.hostname.c_str(), entry.port, entry.username.c_str(), entry.authenticationMethod.c_str(), entry.privateFileName.c_str());
+	auto it = store.entries.find(conid);
+	if (it == store.entries.end()) {
+		fprintf(stderr, "connection id %lld not found\n", conid);
+		return 1;
 	}
-	return 0;
+	auto& entry = it->second;
+	CSSH2 ssh(it->second);
+	if (ssh.init_conection() < 0) {
+		fprintf(stderr, "failed to connect to %s:%d\n", entry.hostname.c_str(), entry.port);
+		return 1;
+	}
+	int rr = ssh.run_shell(cmd);
+	ssh.io_loop();
+	ssh.bye();
+	return rr;
 }
 
 int main(int argc, char** argv)
 {
 	WSADATA wsd;
-	WSAStartup(MAKEWORD(2, 2), &wsd);
-	CoInitialize(nullptr);
+	(void)WSAStartup(MAKEWORD(2, 2), &wsd);
+	(void)CoInitialize(nullptr);
 	int rt = main1(argc, argv);
 	CoUninitialize();
 	WSACleanup();
