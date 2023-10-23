@@ -13,6 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\base">
+      <UniqueIdentifier>{0c748aad-44e8-4c7e-8f1b-d64080f0369a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sync">
+      <UniqueIdentifier>{4809f42a-8e8f-4bcc-94e5-5ea047441b1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\alg">
+      <UniqueIdentifier>{5831726e-b549-451c-bc04-90b7bd8d5a36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\net">
+      <UniqueIdentifier>{7810e455-e3aa-4764-b33f-700646e0b61e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\process">
+      <UniqueIdentifier>{dda091f8-3358-4525-8902-bf41294fe463}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="shellexec.cpp">
@@ -27,6 +42,39 @@
     <ClCompile Include="util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\sync\cohelper.cpp">
+      <Filter>Source Files\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\base\cptfuncs.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\sync\coco2.cpp">
+      <Filter>Source Files\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\sync\coco2_winio.cpp">
+      <Filter>Source Files\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\alg\hashnode.cpp">
+      <Filter>Source Files\alg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\alg\heaparr.cpp">
+      <Filter>Source Files\alg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\base\log.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\sync\sync_debug.cpp">
+      <Filter>Source Files\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\base\xthread.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\net\nethelper.cpp">
+      <Filter>Source Files\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\process\thdpool.cpp">
+      <Filter>Source Files\process</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ssh2.h">
@@ -37,6 +85,27 @@
     </ClInclude>
     <ClInclude Include="util.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\sync\cohelper.hpp">
+      <Filter>Source Files\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\sync\coco2.h">
+      <Filter>Source Files\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\alg\hashnode.h">
+      <Filter>Source Files\alg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\alg\heaparr.h">
+      <Filter>Source Files\alg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\base\log.h">
+      <Filter>Source Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\base\xthread.h">
+      <Filter>Source Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\process\thdpool.h">
+      <Filter>Source Files\process</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

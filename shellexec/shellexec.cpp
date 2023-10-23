@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "util.h"
 #include "ssh2.h"
+#include "sync/coco2.h"
+#include "base/log.h"
 #import <msxml6.dll> raw_interfaces_only
 
 namespace {
@@ -112,6 +114,25 @@ static bool parseXML(LPCWSTR fn, Store& store)
 	return true;
 }
 
+future_free run_ssh2(CSSH2::Host & host, crefstr cmd, int * rr)
+{
+	CSSH2 ssh(host);
+	int rcode=0;
+	if (co_await ssh.init_conection() < 0) {
+		fprintf(stderr, "failed to connect to %s:%d\n", host.hostname.c_str(), host.port);
+		rcode = 1;
+	}
+	else
+	{
+		rcode = co_await ssh.run_shell(cmd);
+		co_await ssh.io_loop();
+		co_await ssh.bye();
+	}
+	*rr = rcode;
+	CCoContainer2::current()->mark_stop();
+	co_return;
+}
+
 int main1(int argc, char** argv)
 {
 	int64_t conid = -1;
@@ -152,15 +173,13 @@ int main1(int argc, char** argv)
 		fprintf(stderr, "connection id %lld not found\n", conid);
 		return 1;
 	}
+	Log::verbose_value = 2;
 	auto& entry = it->second;
-	CSSH2 ssh(it->second);
-	if (ssh.init_conection() < 0) {
-		fprintf(stderr, "failed to connect to %s:%d\n", entry.hostname.c_str(), entry.port);
-		return 1;
-	}
-	int rr = ssh.run_shell(cmd);
-	ssh.io_loop();
-	ssh.bye();
+	CCoContainer2 cont(1);
+	int rr = 0;
+	cont.run([&](){
+		run_ssh2(entry, cmd, &rr);
+	});
 	return rr;
 }
 
@@ -174,3 +193,34 @@ int main(int argc, char** argv)
 	WSACleanup();
 	return rt;
 }
+
+
+#ifdef _WIN32
+#ifndef STATUS_ALERTED
+#define STATUS_ALERTED 0x101
+#endif
+
+extern "C" NTSYSAPI NTSTATUS NTAPI NtDelayExecution(BOOLEAN Alertable, PLARGE_INTEGER DelayInterval);
+
+static int conv_ntstatus(NTSTATUS nt)
+{
+	if (nt == STATUS_ALERTED || nt == STATUS_USER_APC)
+	{
+		errno = EINTR;
+		return -1;
+	}
+	return 0;
+}
+
+extern "C" int usleep(uint32_t timeout)
+{
+	LARGE_INTEGER li;
+	li.QuadPart = -(int64_t)timeout * 10;
+	NTSTATUS nt = NtDelayExecution(FALSE, (timeout == -1) ? 0 : &li);
+	return conv_ntstatus(nt);
+}
+
+extern "C" int gettid(void) {
+	return (int)GetCurrentThreadId();
+}
+#endif

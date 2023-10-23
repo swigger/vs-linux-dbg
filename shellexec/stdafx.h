@@ -8,13 +8,18 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <stdint.h>
-
+#include <assert.h>
+#include <io.h>
+#include <MSWSock.h>
+#include <WS2tcpip.h>
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include <unordered_map>
+#include <unordered_set>
 #include <optional>
 #include <algorithm>
 #include <functional>

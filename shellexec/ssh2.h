@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "sync/coco2.h"
 
 typedef struct _LIBSSH2_SESSION                     LIBSSH2_SESSION;
 typedef struct _LIBSSH2_CHANNEL                     LIBSSH2_CHANNEL;
@@ -18,24 +19,22 @@ public:
 
 protected:
 	Host m_host;
-	int m_sock = -1;
+	fd_t m_sock = -1;
 	bool m_bShell = false;
 	LIBSSH2_SESSION* m_session = 0;
 	LIBSSH2_CHANNEL* m_channel = 0;
 
 public:
-	static int connect_host(const Host& host);
-
 	CSSH2(const Host& host);
 	~CSSH2();
 
-	int init_conection();
-	int run(crefstr cmd);
-	int run_shell(crefstr cmd);
-	int io_loop();
-	int bye();
+	future<int> init_conection();
+	future<int> run(crefstr cmd);
+	future<int> run_shell(crefstr cmd);
+	future<int> io_loop();
+	future<int> bye();
 protected:
-	bool wait_socket(int64_t * eow);
-	int read(string& con, int64_t * eow, bool readerr=false);
-	int write(const char* data, ssize_t len=-1);
+	future<bool> wait_socket(int64_t * eow, fd_t sock=-1);
+	future<int> read(string& con, int64_t * eow, bool readerr=false);
+	future<int> write(const char* data, ssize_t len=-1);
 };

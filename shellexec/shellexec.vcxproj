@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\vcpkg_local\installed\x64-windows\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\vcpkg_local\installed\x64-windows\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\vcpkg_local\installed\x64-windows-static\include;D:\work\utillib\src;$(IncludePath)</IncludePath>
+    <LibraryPath>..\vcpkg_local\installed\x64-windows-static\debug\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnabled>false</VcpkgEnabled>
@@ -112,12 +112,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;libssl.lib;libcrypto.lib;zlibd.lib;Crypt32.lib;Mswsock.lib;ntdll.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,6 +137,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\utillib\src\alg\hashnode.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\alg\heaparr.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\base\cptfuncs.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\base\log.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\base\xthread.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\net\nethelper.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\process\thdpool.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\sync\coco2.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\sync\coco2_winio.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\sync\cohelper.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\sync\sync_debug.cpp" />
     <ClCompile Include="shellexec.cpp" />
     <ClCompile Include="ssh2.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -145,6 +156,13 @@
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\utillib\src\alg\hashnode.h" />
+    <ClInclude Include="..\..\..\utillib\src\alg\heaparr.h" />
+    <ClInclude Include="..\..\..\utillib\src\base\log.h" />
+    <ClInclude Include="..\..\..\utillib\src\base\xthread.h" />
+    <ClInclude Include="..\..\..\utillib\src\process\thdpool.h" />
+    <ClInclude Include="..\..\..\utillib\src\sync\coco2.h" />
+    <ClInclude Include="..\..\..\utillib\src\sync\cohelper.hpp" />
     <ClInclude Include="ssh2.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="util.h" />
