@@ -75,6 +75,9 @@
     <ClCompile Include="..\..\..\utillib\src\process\thdpool.cpp">
       <Filter>Source Files\process</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\utillib\src\base\utilhex.cpp">
+      <Filter>Source Files\base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ssh2.h">
@@ -106,6 +109,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\utillib\src\process\thdpool.h">
       <Filter>Source Files\process</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\sync\coco2_private.h">
+      <Filter>Source Files\sync</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\alg\bitset.hpp">
+      <Filter>Source Files\alg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\alg\util11.h">
+      <Filter>Source Files\alg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\utillib\src\base\utilhex.h">
+      <Filter>Source Files\base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

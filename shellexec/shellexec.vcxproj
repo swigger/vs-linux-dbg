@@ -73,6 +73,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>..\vcpkg_local\installed\x64-windows-static\include;D:\work\utillib\src;$(IncludePath)</IncludePath>
     <LibraryPath>..\vcpkg_local\installed\x64-windows-static\debug\lib;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)-adm</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>..\vcpkg_local\installed\x64-windows-static\include;D:\work\utillib\src;$(IncludePath)</IncludePath>
+    <LibraryPath>..\vcpkg_local\installed\x64-windows-static\lib;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)-adm</TargetName>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnabled>false</VcpkgEnabled>
@@ -128,12 +134,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ntdll.lib;ws2_32.lib;libssl.lib;libcrypto.lib;zlib.lib;Crypt32.lib;Mswsock.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -141,6 +150,7 @@
     <ClCompile Include="..\..\..\utillib\src\alg\heaparr.cpp" />
     <ClCompile Include="..\..\..\utillib\src\base\cptfuncs.cpp" />
     <ClCompile Include="..\..\..\utillib\src\base\log.cpp" />
+    <ClCompile Include="..\..\..\utillib\src\base\utilhex.cpp" />
     <ClCompile Include="..\..\..\utillib\src\base\xthread.cpp" />
     <ClCompile Include="..\..\..\utillib\src\net\nethelper.cpp" />
     <ClCompile Include="..\..\..\utillib\src\process\thdpool.cpp" />
@@ -152,16 +162,21 @@
     <ClCompile Include="ssh2.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\utillib\src\alg\bitset.hpp" />
     <ClInclude Include="..\..\..\utillib\src\alg\hashnode.h" />
     <ClInclude Include="..\..\..\utillib\src\alg\heaparr.h" />
+    <ClInclude Include="..\..\..\utillib\src\alg\util11.h" />
     <ClInclude Include="..\..\..\utillib\src\base\log.h" />
+    <ClInclude Include="..\..\..\utillib\src\base\utilhex.h" />
     <ClInclude Include="..\..\..\utillib\src\base\xthread.h" />
     <ClInclude Include="..\..\..\utillib\src\process\thdpool.h" />
     <ClInclude Include="..\..\..\utillib\src\sync\coco2.h" />
+    <ClInclude Include="..\..\..\utillib\src\sync\coco2_private.h" />
     <ClInclude Include="..\..\..\utillib\src\sync\cohelper.hpp" />
     <ClInclude Include="ssh2.h" />
     <ClInclude Include="stdafx.h" />

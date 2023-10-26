@@ -1,8 +1,11 @@
 #include "stdafx.h"
+#include <atlbase.h>
+#include <atlcom.h>
 #include "util.h"
 #include "ssh2.h"
 #include "sync/coco2.h"
 #include "base/log.h"
+// #include "base/utilhex.h"
 #import <msxml6.dll> raw_interfaces_only
 
 namespace {
@@ -114,9 +117,27 @@ static bool parseXML(LPCWSTR fn, Store& store)
 	return true;
 }
 
+class CSSH2xx : public CSSH2
+{
+public:
+	CSSH2xx(const Host& host) : CSSH2(host) {}
+	bool m_isGdb = false;
+protected:
+	void hack_command(string& cmd) override
+	{
+		if (m_isGdb) {
+			if (cmd == "logout\n" || cmd == "logout\r\n")
+			{
+				cmd = "quit\n" + cmd;
+			}
+		}
+	}
+};
+
 future_free run_ssh2(CSSH2::Host & host, crefstr cmd, int * rr)
 {
-	CSSH2 ssh(host);
+	CSSH2xx ssh(host);
+	ssh.m_isGdb = cmd.find("gdb") != string::npos;
 	int rcode=0;
 	if (co_await ssh.init_conection() < 0) {
 		fprintf(stderr, "failed to connect to %s:%d\n", host.hostname.c_str(), host.port);
@@ -138,6 +159,14 @@ int main1(int argc, char** argv)
 	int64_t conid = -1;
 	int sync_pid = -1;
 	string cmd;
+	Log::verbose_value = 2;
+	Log::open("ssh2.log");
+	Log::verbose(LOG_WITH_META "===========io:%#zx,%#zx,%#zx CommandLine: %s\n",
+		(intptr_t) GetStdHandle(STD_INPUT_HANDLE),
+		(intptr_t) GetStdHandle(STD_OUTPUT_HANDLE),
+		(intptr_t) GetStdHandle(STD_ERROR_HANDLE),
+		GetCommandLineA());
+
 	for (int i = 1; i < argc; ++i)
 	{
 		if (strcmp(argv[i], "/c") == 0) {
@@ -150,6 +179,9 @@ int main1(int argc, char** argv)
 			sync_pid = atoi(argv[++i]);
 		} else if (strcmp(argv[i], "/s") == 0) {
 			conid = atoll(argv[++i]);
+		}
+		else if (i == 1) {
+			// ignore first arg, might be path/to/shellexec.exe
 		}
 		else {
 			fprintf(stderr, "unknown option %s\n", argv[i]);
@@ -173,13 +205,15 @@ int main1(int argc, char** argv)
 		fprintf(stderr, "connection id %lld not found\n", conid);
 		return 1;
 	}
-	Log::verbose_value = 2;
+	if (!cmd.empty()) cmd += "\n";
+
 	auto& entry = it->second;
 	CCoContainer2 cont(1);
 	int rr = 0;
 	cont.run([&](){
 		run_ssh2(entry, cmd, &rr);
 	});
+	Log::verbose(LOG_WITH_META "run_ssh2 DONE, return %d\n", rr);
 	return rr;
 }
 
@@ -188,6 +222,7 @@ int main(int argc, char** argv)
 	WSADATA wsd;
 	(void)WSAStartup(MAKEWORD(2, 2), &wsd);
 	(void)CoInitialize(nullptr);
+	// MessageBox(NULL, L"dbgme", L"dbgme", MB_SERVICE_NOTIFICATION|MB_ICONASTERISK);
 	int rt = main1(argc, argv);
 	CoUninitialize();
 	WSACleanup();
