@@ -239,6 +239,12 @@ future<int> CSSH2::ssh_read(string& con, int64_t* eow, bool readerr)
 future<int> CSSH2::init_conection()
 {
 	int rc = 0;
+	if (strcasecmp(m_host.authenticationMethod.c_str(), "PrivateKey") != 0) {
+		fprintf(stderr, "Only support PrivateKey authentication currently.\n");
+		fprintf(stderr, "Because I don't know how to decrypt the password.\n");
+		co_return -1;
+	}
+
 	tmp_sock_t sock(co_await coio::connect(m_host.hostname.c_str(), m_host.port, 15000));
 	if (sock.sock < 0) {
 		co_return -1;
