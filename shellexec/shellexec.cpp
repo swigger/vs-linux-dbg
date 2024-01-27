@@ -134,7 +134,7 @@ protected:
 	}
 };
 
-future_free run_ssh2(CSSH2::Host & host, crefstr cmd, int * rr)
+async_entry run_ssh2(CSSH2::Host & host, crefstr cmd, int * rr)
 {
 	CSSH2xx ssh(host);
 	ssh.m_isGdb = cmd.find("gdb") != string::npos;

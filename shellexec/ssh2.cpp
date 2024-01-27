@@ -265,7 +265,9 @@ future<int> CSSH2::init_conection()
 	while ((rc = libssh2_userauth_publickey_fromfile(session, m_host.username.c_str(), NULL, m_host.privateFileName.c_str(), NULL)) == LIBSSH2_ERROR_EAGAIN)
 		co_await wait_socket(&eow, sock.sock);
 	if (rc) {
-		fprintf(stderr, "Authentication failed\n");
+		char* errstr = 0;
+		libssh2_session_last_error(session, &errstr, 0, 0);
+		fprintf(stderr, "Authentication failed, rc=%d, err=%s\n", rc, errstr);
 		libssh2_session_disconnect(session, "Auth Failed");
 		libssh2_session_free(session);
 		m_session = 0;
@@ -331,7 +333,7 @@ future<int> CSSH2::io_loop()
 	int ssh_alive = 1;
 	int ss2console_running = 1;
 	// start ssh->console fiber.
-	go_func([&]()->future_free {
+	go_func([&]()->async_entry {
 		auto q = this;
 		string con;
 		for (;;)

@@ -1,6 +1,6 @@
 local vcpkg depends on:
-tinyxml2
-libssh2
+vcpkg install libssh2[openssl]:x64-windows-static
+vcpkg install tinyxml2:x64-windows-static
 
 apply in registry:
 HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\shellexec.exe
