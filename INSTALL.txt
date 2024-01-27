@@ -1,2 +1,7 @@
+local vcpkg depends on:
 tinyxml2
 libssh2
+
+apply in registry:
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\shellexec.exe
+Debugger=D:\work\gitprojs\vs-linux-dbg\x64\Release\shellexec-adm.exe
